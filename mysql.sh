@@ -1,6 +1,8 @@
 #!/bin/bash
 
-installedVersion=$(/usr/local/bin/mysql -V | grep -ioP '(?<=Distrib )\d\.\d{1,2}\.\d{1,3}') || exit 1
+binPath=/usr/local/bin/mysql
+
+installedVersion=$($binPath -V | grep -ioP '(?<=Distrib )\d\.\d{1,2}\.\d{1,3}') || exit 1
 currentVersion=$(curl 'http://api.sinosky.org/version.php?pro=mysql') || exit 1
 
 if [ $installedVersion == $currentVersion ]; then
