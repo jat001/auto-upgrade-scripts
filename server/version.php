@@ -2,6 +2,8 @@
 
 if (!defined('IN_SINOSKY')) exit();
 
+if (!$request) error_code(400);
+
 switch ($request[0]) {
     case 'php':
         if ($redis->exists('php')) {
@@ -81,7 +83,7 @@ switch ($request[0]) {
         break;
 
     default:
-        error_code(404);
+        error_code(400);
 
         break;
 }

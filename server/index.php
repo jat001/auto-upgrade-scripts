@@ -52,6 +52,11 @@ function error_code($status_code) {
 
             break;
 
+        case 400:
+            $status_code .= ' Bad Request';
+
+            break;
+
         case 403:
             $status_code .= ' Forbidden';
 
