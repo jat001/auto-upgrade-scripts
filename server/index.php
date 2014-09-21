@@ -7,7 +7,7 @@ header('Content-Type: text/text; charset=UTF-8');
 
 $now = time();
 
-if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) + 3600 > $now)
+if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) + 3600 > $now)
     error_code(304);
 
 $request = explode('/', $_SERVER['REQUEST_URI']);
@@ -35,8 +35,8 @@ ob_end_clean();
 
 $etag = '"' . md5($output) . '"';
 
-if ($_SERVER['HTTP_IF_NONE_MATCH'] && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)
-    error_header(304);
+if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)
+    error_code(304);
 
 header('Cache-Control: public, max-age=3600');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $now) . ' GMT');

@@ -68,15 +68,20 @@ switch ($request[0]) {
             $redis->setex('hosts', 3600, $hosts);
         }
 
-        if ($request[1] == 'get') {
+        if (isset($request[1]) && $request[1] == 'get') {
             echo $hosts;
 
-            if ($request[2] == 'dl') header('Content-Disposition: attachment; filename="imouto.host.txt"');
+            if (isset($request[2]) && $request[2] == 'dl') header('Content-Disposition: attachment; filename="imouto.host.txt"');
         } else {
                 preg_match('/#\+UPDATE_TIME (\d{4}(-\d{2}){2} (\d{2}:){2}\d{2})/i', $hosts, $matches);
 
                 echo $matches[1];
         }
+
+        break;
+
+    default:
+        error_code(404);
 
         break;
 }
