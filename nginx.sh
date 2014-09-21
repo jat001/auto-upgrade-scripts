@@ -1,9 +1,9 @@
 #!/bin/bash
 
-binPath=/usr/local/bin/mysql
+nginx='/usr/local/sbin/nginx -v 2>&1'
 
-installedVersion=$($binPath -v 2>&1 | grep -ioP '(?<=nginx/)\d\.\d{1,2}\.\d{1,3}') || exit 1
-currentVersion=$(curl 'http://api.sinosky.org/version.php?pro=nginx') || exit 1
+installedVersion=$($nginx | grep -ioP '(?<=nginx/)\d\.\d{1,2}\.\d{1,3}') || exit 1
+currentVersion=$(curl 'https://api.sinosky.org/version/nginx') || exit 1
 
 if [ $installedVersion == $currentVersion ]; then
     exit 0

@@ -3,7 +3,7 @@
 installedFolder='/home/www/root/default/phpmyadmin'
 
 installedVersion=$(grep -ioP '(?<=Version )\d\.\d{1,2}\.\d{1,3}' $installedFolder/README)
-currentVersion=$(curl 'http://api.sinosky.org/version.php?pro=phpmyadmin') || exit 1
+currentVersion=$(curl 'https://api.sinosky.org/version/phpmyadmin') || exit 1
 
 if [ $installedVersion ] && [ $installedVersion == $currentVersion ]; then
     exit 0
