@@ -2,7 +2,7 @@
 
 php='/usr/local/bin/php -v'
 
-installedVersion=$($php | grep -ioP '(?<=PHP )\d\.\d{1,2}\.\d{1,3}') || exit 1
+installedVersion=$($php | grep -ioP '(?<=PHP )\d\.\d{1,2}\.\d{1,3}')
 currentVersion=$(curl 'https://api.sinosky.org/version/php') || exit 1
 
 if [ $installedVersion == $currentVersion ]; then

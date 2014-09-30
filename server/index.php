@@ -3,7 +3,7 @@
 define('IN_SINOSKY', true);
 
 header('X-SinoSky-API-Version: 20140918');
-header('Content-Type: text/text; charset=UTF-8');
+header('Content-Type: text/plain; charset=UTF-8');
 
 $now = time();
 

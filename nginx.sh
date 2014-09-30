@@ -2,7 +2,7 @@
 
 nginx='/usr/local/sbin/nginx -v 2>&1'
 
-installedVersion=$($nginx | grep -ioP '(?<=nginx/)\d\.\d{1,2}\.\d{1,3}') || exit 1
+installedVersion=$($nginx | grep -ioP '(?<=nginx/)\d\.\d{1,2}\.\d{1,3}')
 currentVersion=$(curl 'https://api.sinosky.org/version/nginx') || exit 1
 
 if [ $installedVersion == $currentVersion ]; then

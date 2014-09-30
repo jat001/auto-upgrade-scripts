@@ -2,7 +2,7 @@
 
 mysql='/usr/local/bin/mysql -V'
 
-installedVersion=$($mysql | grep -ioP '(?<=Distrib )\d\.\d{1,2}\.\d{1,3}') || exit 1
+installedVersion=$($mysql | grep -ioP '(?<=Distrib )\d\.\d{1,2}\.\d{1,3}')
 currentVersion=$(curl 'https://api.sinosky.org/version/mysql') || exit 1
 
 if [ $installedVersion == $currentVersion ]; then
