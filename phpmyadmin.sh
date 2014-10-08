@@ -17,7 +17,7 @@ wget "http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/$currentVer
 7za x $file
 rm -f $file
 if [ $installedVersion ]; then
-    cp $installedFolder/config.inc.php $folderName
+    cp -a $installedFolder/config.inc.php $folderName
 fi
 rm -rf $installedFolder
 mv $folderName $installedFolder
