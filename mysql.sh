@@ -26,3 +26,5 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DDEFAULT_CHARSET=utf8mb4 -DDEFAUL
 
 mv /tmp/$newFolderName /usr/local/src
 rm -rf /usr/local/src/$oldFolderName
+
+service mysqld restart

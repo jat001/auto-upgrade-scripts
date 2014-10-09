@@ -25,3 +25,5 @@ cd $newFolderName
 
 mv /tmp/$newFolderName /usr/local/src
 rm -rf /usr/local/src/$oldFolderName
+
+service nginx restart

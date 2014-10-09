@@ -29,3 +29,5 @@ cd /usr/local/src/php-extension/redis-2.2.5 && /usr/local/php/bin/phpize && ./co
 
 mv /tmp/$newFolderName /usr/local/src
 rm -rf /usr/local/src/$oldFolderName
+
+service php-fpm restart
