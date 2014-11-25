@@ -3,7 +3,7 @@
 path='/etc/hosts'
 tmpPath='/tmp/hosts'
 
-installedVersion=$(grep -ioP '(?<=#\+UPDATE_TIME )\d{4}(-\d{2}){2} (\d{2}:){2}\d{2}' $path 2>/dev/null)
+installedVersion=$(date -d "$(grep -ioP '(?<=# UPDATE: ).+' $path 2>/dev/null)" +%s)
 currentVersion=$(curl 'https://api.sinosky.org/version/hosts') || exit 1
 
 if [ "$installedVersion" == "$currentVersion" ]; then
@@ -11,6 +11,8 @@ if [ "$installedVersion" == "$currentVersion" ]; then
 fi
 
 wget 'https://api.sinosky.org/version/hosts/get/dl' -O $tmpPath || exit 1
-sed -i '/#+BEGIN/,/#+END/d' $path
+sed -i '/#TX-HOSTS START/,/#TX-HOSTS END/d' $path
+echo '#TX-HOSTS START' >> $path
 cat $tmpPath >> $path
+echo '#TX-HOSTS END' >> $path
 rm -f $tmpPath

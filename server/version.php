@@ -65,7 +65,7 @@ switch ($request[0]) {
         if ($redis->exists('hosts')) {
             $hosts = $redis->get('hosts');
         } else {
-            $hosts = str_replace("\r\n", "\n", ltrim(file_get_contents('https://www.dropbox.com/sh/lw0ljk3sllmimpz/AADvmg0wxOXHAtLQ9WhPlvAva/imouto.host.txt?dl=1'), "\xEF\xBB\xBF"));
+            $hosts = str_replace("\r\n", "\n", ltrim(file_get_contents('http://tx.txthinking.com/hosts'), "\xEF\xBB\xBF"));
 
             $redis->setex('hosts', 3600, $hosts);
         }
@@ -74,13 +74,13 @@ switch ($request[0]) {
             echo $hosts;
 
             if (isset($request[2]) && $request[2] == 'dl') {
-                header('Content-Disposition: attachment; filename="imouto.host.txt"');
+                header('Content-Disposition: attachment; filename="hosts"');
                 header('Content-Length: ' . strlen($hosts));
             }
         } else {
-                preg_match('/#\+UPDATE_TIME (\d{4}(-\d{2}){2} (\d{2}:){2}\d{2})/i', $hosts, $matches);
+                preg_match('/# UPDATE: (.+)/i', $hosts, $matches);
 
-                echo $matches[1];
+                echo strtotime($matches[1]);
         }
 
         break;
