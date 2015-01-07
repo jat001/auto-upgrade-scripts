@@ -1,69 +1,65 @@
 <?php
 
+define('API_Version', '0.01-alpha');
+
 define('IN_SINOSKY', true);
+define('ROOT_PATH', __DIR__);
 
-header('X-SinoSky-API-Version: 20140918');
-header('Content-Type: text/plain; charset=UTF-8');
+require_once(ROOT_PATH . DIRECTORY_SEPARATOR . 'config.php');
 
-$now = time();
+if (DEBUG)
+    error_reporting(E_ALL);
+else
+    error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
-if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) + 3600 > $now)
-    error_code(304);
+require_once(ROOT_PATH . DIRECTORY_SEPARATOR . 'http.php');
+require_once(ROOT_PATH . DIRECTORY_SEPARATOR . 'db.php');
 
 $request = explode('/', $_SERVER['REQUEST_URI']);
 $request = array_filter($request);
+if (!$request) error_code(404);
 
-$file = str_replace('.', '', array_shift($request));
-if (!$file) error_code(404);
-
-$file = __DIR__ . DIRECTORY_SEPARATOR . $file . '.php';
-
-if (!file_exists($file)) error_code(404);
-
-$redis = new Redis();
-$redis->connect('/tmp/redis.sock');
+$file = array_shift($request);
+$file = realpath(ROOT_PATH . DIRECTORY_SEPARATOR . $file . '.php');
+if (dirname($file) != ROOT_PATH || !file_exists($file)) error_code(404);
 
 ob_start();
 
-include_once($file);
+require_once($file);
 
-//$redis->save();
-$redis->close();
-
+$length = ob_get_length();
 $output = ob_get_contents();
 ob_end_clean();
 
-$etag = '"' . md5($output) . '"';
+header('Content-Type: text/plain; charset=UTF-8');
+header('Cache-Control: public, max-age=0, s-maxage=0');
+header('Date: ' . date('D, d M Y H:i:s', time()) . ' GMT');
 
-if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)
-    error_code(304);
+if ($time) {
+    header('Last-Modified: ' . date('D, d M Y H:i:s', $time) . ' GMT');
+    header('Expires: ' . date('D, d M Y H:i:s', $time + 86400) . ' GMT');
+}
 
-header('Cache-Control: public, max-age=3600');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $now) . ' GMT');
-header('Expires: ' . gmdate('D, d M Y H:i:s', $now + 3600) . ' GMT');
-header('ETag: ' . $etag);
+header('Content-Length: ' . ob_get_length());
+header('ETag: "' . md5($output) . '"');
+header('X-SinoSky-API-Version: ' . API_Version);
 
 exit($output);
 
 function error_code($status_code) {
     switch ($status_code) {
-        case 304:
-            $status_code .= ' Not Modified';
-
-            break;
-
         case 400:
-            $status_code .= ' Bad Request';
+            $status_code = '400 Bad Request';
 
             break;
 
         case 403:
-            $status_code .= ' Forbidden';
+            $status_code = '403 Forbidden';
 
             break;
 
         case 404:
-            $status_code .= ' Not Found';
+            $status_code = '404 Not Found';
 
             break;
     }

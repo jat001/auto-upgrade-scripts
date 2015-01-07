@@ -1,11 +1,15 @@
 #!/bin/bash
 
-installedFolder='/home/www/root/default/phpmyadmin'
+installedFolder='/data/root/default/phpmyadmin'
 
-installedVersion=$(grep -ioP '(?<=Version )\d\.\d{1,2}\.\d{1,3}' $installedFolder/README)
+installedVersion=$(grep -ioP '(?<=Version )\d\.\d{1,2}\.\d{1,3}' "$installedFolder/README")
 currentVersion=$(curl 'https://api.sinosky.org/version/phpmyadmin') || exit 1
 
-if [ $installedVersion == $currentVersion ]; then
+if [ -z "$currentVersion" ]; then
+    exit 1
+fi
+
+if [ "$installedVersion" == "$currentVersion" ]; then
     exit 0
 fi
 
@@ -14,10 +18,10 @@ file="$folderName.7z"
 
 cd /tmp
 wget "http://downloads.sourceforge.net/project/phpmyadmin/phpMyAdmin/$currentVersion/$file" || exit 1
-7za x $file
-rm -f $file
-if [ $installedVersion ]; then
-    cp -a $installedFolder/config.inc.php $folderName
+7za x "$file"
+rm -f "$file"
+if [ "$installedVersion" ]; then
+    cp -a "$installedFolder/config.inc.php" "$folderName"
 fi
-rm -rf $installedFolder
-mv $folderName $installedFolder
+rm -rf "$installedFolder"
+mv "$folderName" "$installedFolder"

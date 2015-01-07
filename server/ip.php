@@ -9,7 +9,7 @@ if (!$_POST['token'] || !$_POST['time'] || !$_POST['action'] || sha1($key . $_PO
 
 switch ($request[0]) {
     case 'update':
-        $redis->set('ip', $_SERVER['REMOTE_ADDR'])
+        $redis->set('ip', $_SERVER['REMOTE_ADDR']);
 
         echo $_SERVER['REMOTE_ADDR'];
 

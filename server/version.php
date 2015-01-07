@@ -4,83 +4,68 @@ if (!defined('IN_SINOSKY')) exit();
 
 if (!$request) error_code(400);
 
+$db = new db();
+
 switch ($request[0]) {
     case 'php':
-        if ($redis->exists('php')) {
-            echo $redis->get('php');
-        } else {
-            $html = file_get_contents('http://php.net/downloads.php');
-            preg_match('/Current Stable.+?PHP (\d\.\d{1,2}\.\d{1,3})/is', $html, $matches);
+        $result = $db->get('php', 'http://php.net/downloads.php', 'regex', '/Current Stable.+?PHP (\d\.\d{1,2}\.\d{1,3})/is');
 
-            $redis->setex('php', 3600, $matches[1]);
+        if ($result && is_array($result)) {
+            list($version, $time) = $result;
 
-            echo $matches[1];
+            echo $version;
         }
 
         break;
 
     case 'mysql':
-        if ($redis->exists('mysql')) {
-            echo $redis->get('mysql');
-        } else {
-            $html = file_get_contents('http://dev.mysql.com/downloads/mysql/');
-            preg_match('/MySQL Community Server (\d\.\d{1,2}\.\d{1,3})/i', $html, $matches);
+        $result = $db->get('mysql', 'http://dev.mysql.com/downloads/mysql/', 'regex', '/MySQL Community Server (\d\.\d{1,2}\.\d{1,3})/i');
 
-            $redis->setex('mysql', 3600, $matches[1]);
+        if ($result && is_array($result)) {
+            list($version, $time) = $result;
 
-            echo $matches[1];
+            echo $version;
         }
 
         break;
 
     case 'nginx':
-        if ($redis->exists('nginx')) {
-            echo $redis->get('nginx');
-        } else {
-            $html = file_get_contents('http://nginx.org/en/download.html');
-            preg_match('/nginx-(\d\.\d{1,2}\.\d{1,3})/i', $html, $matches);
+        $result = $db->get('nginx', 'http://nginx.org/en/download.html', 'regex', '/nginx-(\d\.\d{1,2}\.\d{1,3})/i');
 
-            $redis->setex('nginx', 3600, $matches[1]);
+        if ($result && is_array($result)) {
+            list($version, $time) = $result;
 
-            echo $matches[1];
+            echo $version;
         }
 
         break;
 
     case 'phpmyadmin':
-        if ($redis->exists('phpmyadmin')) {
-            echo $redis->get('phpmyadmin');
-        } else {
-            $html = file_get_contents('http://www.phpmyadmin.net/home_page/version.json');
-            $version = json_decode($html, true);
+        $result = $db->get('phpmyadmin', 'http://www.phpmyadmin.net/home_page/version.json', 'json', 'version');
 
-            $redis->setex('phpmyadmin', 3600, $version['version']);
+        if ($result && is_array($result)) {
+            list($version, $time) = $result;
 
-            echo $version['version'];
+            echo $version;
         }
 
         break;
 
     case 'hosts':
-        if ($redis->exists('hosts')) {
-            $hosts = $redis->get('hosts');
-        } else {
-            $hosts = str_replace("\r\n", "\n", ltrim(file_get_contents('http://tx.txthinking.com/hosts'), "\xEF\xBB\xBF"));
+        $result = $db->get('hosts', 'http://freedom.txthinking.com/hosts');
+        if ($result && is_array($result)) {
+            list($hosts, $time) = $result;
 
-            $redis->setex('hosts', 3600, $hosts);
-        }
+            if (isset($request[1]) && $request[1] == 'get') {
+                echo $hosts;
 
-        if (isset($request[1]) && $request[1] == 'get') {
-            echo $hosts;
+                if (isset($request[2]) && $request[2] == 'dl')
+                    header('Content-Disposition: attachment; filename="hosts"');
+            } else {
+                    preg_match('/# UPDATE: (.+)/i', $hosts, $matches);
 
-            if (isset($request[2]) && $request[2] == 'dl') {
-                header('Content-Disposition: attachment; filename="hosts"');
-                header('Content-Length: ' . strlen($hosts));
+                    if (isset($matches[1]) && $matches[1]) echo strtotime($matches[1]);
             }
-        } else {
-                preg_match('/# UPDATE: (.+)/i', $hosts, $matches);
-
-                echo strtotime($matches[1]);
         }
 
         break;
