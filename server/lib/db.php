@@ -1,9 +1,8 @@
 <?php
-
 if (!defined('IN_SINOSKY')) exit();
 
 class db {
-    private $redis;
+    public $redis;
 
     public function __construct() {
         $this->redis = new Redis();
@@ -74,8 +73,6 @@ class db {
             }
         }
 
-        return array($result, $time);
+        return [$result, $time];
     }
 }
-
-?>

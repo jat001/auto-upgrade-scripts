@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_SINOSKY')) exit();
 
 class http {
@@ -12,7 +11,7 @@ class http {
 
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
@@ -34,5 +33,3 @@ class http {
         return $result;
     }
 }
-
-?>
