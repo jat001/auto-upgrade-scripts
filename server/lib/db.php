@@ -25,7 +25,7 @@ class db {
             case 'regex':
                 preg_match($expression, $result, $matches);
 
-                if (!isset($matches[1]) || !$matches[1]) return false;
+                if (empty($matches[1])) return false;
 
                 $result = $matches[1];
 
@@ -34,7 +34,7 @@ class db {
             case 'json':
                 $result = json_decode($result, true);
 
-                if (!isset($result[$expression]) || !$result[$expression]) return false;
+                if (empty($result[$expression])) return false;
 
                 $result = $result[$expression];
 

@@ -25,7 +25,7 @@ header('Content-Type: text/plain; charset=UTF-8');
 header('Cache-Control: public, max-age=0, s-maxage=0');
 header('Date: ' . date('D, d M Y H:i:s', time()) . ' GMT');
 
-if (isset($class->time) && $class->time) {
+if (!empty($class->time)) {
     header('Last-Modified: ' . date('D, d M Y H:i:s', $class->time) . ' GMT');
     header('Expires: ' . date('D, d M Y H:i:s', $class->time + 86400) . ' GMT');
 }
