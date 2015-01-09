@@ -62,6 +62,10 @@ class db {
 
             $time = time() - ($expires - $ttl);
 
+            // WARNING: a bug here
+            // http://stackoverflow.com/questions/23713480/after-php-upgrade-pcntl-fork-causing-errno-32-broken-pipe
+            // https://github.com/phpredis/phpredis/issues/474
+            /*
             if ($ttl < $expires - 86400) {
                 $pid = pcntl_fork();
 
@@ -71,6 +75,7 @@ class db {
                     exit();
                 }
             }
+            */
         }
 
         return [$result, $time];
