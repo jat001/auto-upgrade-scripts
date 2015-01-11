@@ -30,7 +30,7 @@ if (!empty($class->time)) {
     header('Expires: ' . date('D, d M Y H:i:s', $class->time + 86400) . ' GMT');
 }
 
-header('Content-Length: ' . ob_get_length());
+header('Content-Length: ' . $length);
 header('ETag: "' . md5($output) . '"');
 header('X-SinoSky-API-Version: ' . API_Version);
 
