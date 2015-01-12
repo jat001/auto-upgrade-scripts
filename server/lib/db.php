@@ -62,20 +62,24 @@ class db {
 
             $time = time() - ($expires - $ttl);
 
-            // WARNING: a bug here
-            // http://stackoverflow.com/questions/23713480/after-php-upgrade-pcntl-fork-causing-errno-32-broken-pipe
-            // https://github.com/phpredis/phpredis/issues/474
-            /*
-            if ($ttl < $expires - 86400) {
+            if ($ttl < $expires - 86400 && !$this->redis->exists('updating')) {
+                $this->redis->setex('updating', 60, '1');
+
+                $this->__destruct();
+
                 $pid = pcntl_fork();
 
-                if ($pid == 0) {
+                $this->__construct();
+
+                if ($pid === 0) {
                     $this->_get($name, $url, $type, $expression, $expires);
+
+                    $this->redis->del('updating');
 
                     exit();
                 }
             }
-            */
+
         }
 
         return [$result, $time];
