@@ -76,10 +76,12 @@ class db {
 
                     $this->redis->del('updating');
 
-                    exit();
+                    posix_kill(posix_getpid(), SIGTERM);
+                } else if ($pid !== 1) {
+                    pcntl_signal(SIGCLD, SIG_IGN);
+                    pcntl_signal(SIGCHLD,SIG_IGN);
                 }
             }
-
         }
 
         return [$result, $time];
