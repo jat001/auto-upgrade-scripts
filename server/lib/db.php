@@ -39,6 +39,15 @@ class db {
                 $result = $result[$expression];
 
                 break;
+
+            case 'callback':
+                $result = json_decode($result, true);
+
+                $result = call_user_func($expression, $result);
+
+                if (empty($result)) return false;
+
+                break;
         }
 
         $this->redis->setex($name, $expires, $result);

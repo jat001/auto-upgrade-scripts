@@ -54,6 +54,8 @@ function error_code($status_code) {
             break;
     }
 
+    ob_end_clean();
+
     header('HTTP/1.1 ' . $status_code);
     header('Status: ' . $status_code);
 

@@ -61,6 +61,7 @@ class version {
 
             case 'hosts':
                 $result = $db->get('hosts', 'http://freedom.txthinking.com/hosts');
+
                 if ($result && is_array($result)) {
                     list($hosts, $this->time) = $result;
 
@@ -72,8 +73,29 @@ class version {
                     } else {
                             preg_match('/# UPDATE: (.+)/i', $hosts, $matches);
 
-                            if (isset($matches[1]) && $matches[1]) echo strtotime($matches[1]);
+                            if (!empty($matches[1])) echo strtotime($matches[1]);
                     }
+                }
+
+                break;
+
+            case 'hhvm':
+                $result = $db->get('hhvm', 'https://api.github.com/repos/facebook/hhvm/tags', 'callback', function ($tags) {
+                    foreach ($tags as $tag) {
+                        if (substr($tag['name'], 0, 5) != 'HHVM-') continue;
+
+                        $tag['version'] = substr($tag['name'], 5);
+
+                        if (empty($version) OR version_compare($tag['version'], $version, '>')) $version = $tag['version'];
+                    }
+
+                    return $version;
+                });
+
+                if ($result && is_array($result)) {
+                    list($version, $this->time) = $result;
+
+                    echo $version;
                 }
 
                 break;
