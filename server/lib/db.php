@@ -41,8 +41,6 @@ class db {
                 break;
 
             case 'callback':
-                $result = json_decode($result, true);
-
                 $result = call_user_func($expression, $result);
 
                 if (empty($result)) return false;

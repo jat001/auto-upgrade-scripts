@@ -81,11 +81,14 @@ class version {
 
             case 'hhvm':
                 $result = $db->get('hhvm', 'https://api.github.com/repos/facebook/hhvm/tags', 'callback', function ($tags) {
+                    $tags = json_decode($tags, true);
+
+                    if (!$tags) return false;
+
                     foreach ($tags as $tag) {
                         if (substr($tag['name'], 0, 5) != 'HHVM-') continue;
 
                         $tag['version'] = substr($tag['name'], 5);
-
                         if (empty($version) OR version_compare($tag['version'], $version, '>')) $version = $tag['version'];
                     }
 
