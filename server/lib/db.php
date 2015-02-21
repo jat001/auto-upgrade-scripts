@@ -7,6 +7,7 @@ class db {
     public function __construct() {
         $this->redis = new Redis();
         $this->redis->connect(REDIS_SOCKET);
+        $this->redis->select(REDIS_DB_INDEX);
     }
 
     public function __destruct() {
