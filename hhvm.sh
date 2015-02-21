@@ -15,13 +15,16 @@ if [ "$installedVersion" == "$currentVersion" ]; then
 fi
 
 if [ -d "$srcFolder" ]; then
+    cd "$srcFolder"
+    rm -rf ./third-party
     git pull
 else
     git clone https://github.com/facebook/hhvm.git "$srcFolder"
+    cd "$srcFolder"
 fi
 
-cd "$srcFolder"
 git checkout tags/HHVM-$currentVersion
+git submodule update --init --recursive
 
 cmake ./ -DCMAKE_INSTALL_PREFIX=/usr/local/hhvm && make || exit 1
 
