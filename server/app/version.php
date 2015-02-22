@@ -89,7 +89,7 @@ class version {
                         if (substr($tag['name'], 0, 5) != 'HHVM-') continue;
 
                         $tag['version'] = substr($tag['name'], 5);
-                        if (empty($version) OR version_compare($tag['version'], $version, '>')) $version = $tag['version'];
+                        if (empty($version) || version_compare($tag['version'], $version, '>')) $version = $tag['version'];
                     }
 
                     return $version;

@@ -26,7 +26,7 @@ fi
 git checkout tags/HHVM-$currentVersion
 git submodule update --init --recursive
 
-cmake ./ -DCMAKE_INSTALL_PREFIX=/usr/local/hhvm && make || exit 1
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/hhvm && make || exit 1
 
 service hhvm stop
 make install
