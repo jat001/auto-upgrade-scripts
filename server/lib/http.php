@@ -2,10 +2,16 @@
 if (!defined('IN_SINOSKY')) exit();
 
 class http {
-    private $curl_i = 1;
+    public static function curl_get($url, $timeout = 15, $retry = 5) {
+        if (!isset($i)) {
+            static $i;
+            $i = 1;
+        }
 
-    public function curl_get($url, $timeout = 15, $retry = 5) {
-        if ($retry && $this->curl_i > $retry) return false;
+        if ($retry && $i > $retry) {
+            $i = 1;
+            return false;
+        }
 
         $ch = curl_init($url);
 
@@ -24,12 +30,13 @@ class http {
         curl_close($ch);
 
         if (!$result && $retry) {
-            $this->curl_i++;
+            $i++;
             sleep(1);
 
-            return $this->curl_get($url, $timeout, $retry);
+            return self::curl_get($url, $timeout, $retry);
         }
 
+        $i = 1;
         return $result;
     }
 }

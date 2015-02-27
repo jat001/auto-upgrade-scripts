@@ -6,8 +6,13 @@ $request = array_filter($request);
 if (!$request) error_code(404);
 
 $class = array_shift($request);
-$file = realpath(build_file_path('app', $class . '.php'));
-if (dirname($file) != build_file_path('app') || !file_exists($file))
+$file = realpath(build_file_path([
+    'app',
+    $class . '.php'
+]));
+if (dirname($file) != build_file_path([
+    'app'
+]) || !file_exists($file))
     error_code(403);
 
 require_once($file);

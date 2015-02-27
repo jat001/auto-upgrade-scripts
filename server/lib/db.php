@@ -16,9 +16,7 @@ class db {
     }
 
     public function _get($name, $url, $type = null, $expression = null, $expires = 604800) {
-        $curl = new http();
-
-        $result = $curl->curl_get($url);
+        $result = http::curl_get($url);
 
         if (!$result) return false;
 
@@ -49,7 +47,7 @@ class db {
                 break;
         }
 
-        $this->redis->setex($name, $expires, $result);
+        $this->redis->setex($name, $expires, serialize($result));
 
         return $result;
     }
@@ -64,7 +62,7 @@ class db {
 
             $time = time();
         } else {
-            $result = $this->redis->get($name);
+            $result = unserialize($this->redis->get($name));
 
             if (!$result) return false;
 
@@ -92,6 +90,9 @@ class db {
             }
         }
 
-        return [$result, $time];
+        return [
+            $result,
+            $time
+        ];
     }
 }
