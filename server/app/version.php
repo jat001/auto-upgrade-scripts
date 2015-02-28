@@ -104,13 +104,13 @@ class version {
                 break;
 
             case 'czip':
-                $data_dir = build_file_path([
+                $qqwry_dir = build_file_path([
                     DATA_PATH,
                     'czip'
                 ], false);
 
-                if (!file_exists($data_dir)) {
-                    mkdir($data_dir, 0755, true);
+                if (!file_exists($qqwry_dir)) {
+                    mkdir($qqwry_dir, 0755, true);
                 }
 
                 $result = $db->get('czip', 'http://update.cz88.net/ip/copywrite.rar', 'callback', function ($copywrite) {
@@ -126,55 +126,58 @@ class version {
 
                     $copywrite['date'] = $matches[1][0] . $matches[2][0] . $matches[3][0];
 
-                    $qqwry = http::curl_get('http://update.cz88.net/ip/qqwry.rar', 30);
-
-                    if (strlen($qqwry) != $copywrite['size']) return false;
-
-                    $qqwry_header = str_split(substr($qqwry, 0, 0x200));
-                    $qqwry = substr($qqwry, 0x200);
-
-                    $key = $copywrite['key'];
-
-                    for($i=0; $i<0x200; $i++)
-                    {
-                        $key *= 0x805;
-                        $key++;
-                        $key &= 0xFF;
-
-                        $qqwry_header[$i] = chr(ord($qqwry_header[$i]) ^ $key);
-                    }
-
-                    $qqwry = gzuncompress(implode('', $qqwry_header) . $qqwry);
-
-                    file_put_contents(build_file_path([
+                    $qqwry = build_file_path([
                         DATA_PATH,
                         'czip',
                         $copywrite['date'] . '.dat'
-                    ], false), $qqwry);
+                    ], false);
+
+                    if (!file_exists($qqwry)) {
+                        $data = http::curl_get('http://update.cz88.net/ip/qqwry.rar', 30);
+
+                        if (strlen($data) != $copywrite['size']) return false;
+
+                        $data_header = str_split(substr($data, 0, 0x200));
+                        $data = substr($data, 0x200);
+
+                        $key = $copywrite['key'];
+
+                        for($i=0; $i<0x200; $i++)
+                        {
+                            $key *= 0x805;
+                            $key++;
+                            $key &= 0xFF;
+
+                            $data_header[$i] = chr(ord($data_header[$i]) ^ $key);
+                        }
+
+                        $data = gzuncompress(implode('', $data_header) . $data);
+
+                        file_put_contents($qqwry, $data);
+                    }
 
                     return [
                         'version' => $copywrite['version'],
-                        'date' => strtotime($copywrite['date'])
+                        'date' => $copywrite['date']
                     ];
                 });
 
                 if ($result) {
                     list($version, $this->time) = $result;
 
-                    $qqwry = date('Ymd', $version['date']) . '.dat';
+                    $qqwry = $version['date'] . '.dat';
 
-                    $data_list = scandir($data_dir);
-                    foreach ($data_list as $data) {
-                        if ($data == '.' || $data == '..') continue;
+                    foreach (scandir($qqwry_dir) as $_qqwry) {
+                        if ($_qqwry == '.' || $_qqwry == '..') continue;
 
-                        if ($data != $qqwry) unlink(build_file_path([
-                            $data_dir,
-                            $data
+                        if ($_qqwry != $qqwry) unlink(build_file_path([
+                            $qqwry_dir,
+                            $_qqwry
                         ]));
                     }
 
                     $qqwry = build_file_path([
-                        $data_dir,
+                        $qqwry_dir,
                         $qqwry
                     ], false);
 
