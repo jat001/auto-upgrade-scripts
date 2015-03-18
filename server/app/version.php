@@ -173,7 +173,7 @@ class version {
                         if ($_qqwry != $qqwry) unlink(build_file_path([
                             $qqwry_dir,
                             $_qqwry
-                        ]));
+                        ], false));
                     }
 
                     $qqwry = build_file_path([
