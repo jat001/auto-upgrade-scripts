@@ -39,7 +39,10 @@ header('Content-Length: ' . $length);
 header('ETag: "' . md5($output) . '"');
 header('X-SinoSky-API-Version: ' . API_Version);
 
-exit($output);
+echo $output;
+fastcgi_finish_request();
+longtime::call_longtime_func();
+exit(0);
 
 function error_code($status_code) {
     switch ($status_code) {

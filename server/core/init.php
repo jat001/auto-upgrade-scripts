@@ -13,10 +13,13 @@ else
 date_default_timezone_set(TIMEZONE);
 
 spl_autoload_register(function ($class) {
-    require_once(build_file_path([
-        'lib',
-        $class . '.php'
-    ]));
+    if (!class_exists($class, false))
+        require_once(build_file_path([
+            'lib',
+            $class . '.php'
+        ]));
+
+    return true;
 });
 
 require_once(build_file_path([

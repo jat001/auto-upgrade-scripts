@@ -11,7 +11,7 @@ class db {
     }
 
     public function __destruct() {
-        //$this->redis->bgsave();
+//      $this->redis->bgsave();
         $this->redis->close();
     }
 
@@ -68,25 +68,19 @@ class db {
 
             $time = time() - ($expires - $ttl);
 
-            if ($ttl < $expires - 86400 && !$this->redis->exists('updating')) {
-                $this->redis->setex('updating', 60, '1');
+            if ($ttl < $expires - 86400) {
+                longtime::$funcs[] = [
+                    'obj' => $this,
+                    'method' => 'update',
 
-                $this->__destruct();
-
-                $pid = pcntl_fork();
-
-                $this->__construct();
-
-                if ($pid === 0) {
-                    $this->_get($name, $url, $type, $expression, $expires);
-
-                    $this->redis->del('updating');
-
-                    posix_kill(posix_getpid(), SIGTERM);
-                } else if ($pid !== 1) {
-                    pcntl_signal(SIGCLD, SIG_IGN);
-                    pcntl_signal(SIGCHLD, SIG_IGN);
-                }
+                    'args' => [
+                        $name,
+                        $url,
+                        $type,
+                        $expression,
+                        $expires
+                    ]
+                ];
             }
         }
 
@@ -94,5 +88,18 @@ class db {
             $result,
             $time
         ];
+    }
+
+    public function update($name, $url, $type, $expression, $expires)
+    {
+        if ($this->redis->exists('updating')) return false;
+
+        $this->redis->setex('updating', 60, '1');
+
+        $this->_get($name, $url, $type, $expression, $expires);
+
+        $this->redis->del('updating');
+
+        return true;
     }
 }
