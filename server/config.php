@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('IN_SINOSKY')) exit();
+if (!defined('IN_SINOSKY')) exit(1);
 
 define('DEBUG', true);
 define('TIMEZONE', 'Asia/Shanghai');

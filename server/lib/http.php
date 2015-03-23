@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_SINOSKY')) exit();
+if (!defined('IN_SINOSKY')) exit(1);
 
 class http {
     public static function curl_get($url, $timeout = 15, $retry = 5) {
