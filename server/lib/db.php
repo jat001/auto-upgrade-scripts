@@ -15,7 +15,7 @@ class db {
         $this->redis->close();
     }
 
-    public function _get($name, $url, $type = null, $expression = null, $expires = 604800) {
+    private function _get($name, $url, $type = null, $expression = null, $expires = 604800) {
         $result = http::curl_get($url);
 
         if (!$result) return false;

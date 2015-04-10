@@ -1,14 +1,18 @@
 <?php
 define('IN_SINOSKY', true);
-define('API_Version', '0.01-beta');
+define('API_Version', '0.01-stable');
 define('ROOT_PATH', __DIR__);
-define('DATA_PATH', implode(DIRECTORY_SEPARATOR, [
-    ROOT_PATH,
+define('DATA_PATH', build_file_path([
     'data'
 ]));
 
-require_once(implode(DIRECTORY_SEPARATOR, [
-    ROOT_PATH,
+require_once(build_file_path([
     'core',
     'init.php'
 ]));
+
+function build_file_path($path, $root = true) {
+    if ($root) array_unshift($path, ROOT_PATH);
+
+    return implode(DIRECTORY_SEPARATOR, $path);
+}

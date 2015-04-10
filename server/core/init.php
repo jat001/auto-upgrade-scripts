@@ -26,9 +26,3 @@ require_once(build_file_path([
     'core',
     'output.php'
 ]));
-
-function build_file_path($path, $root = true) {
-    if ($root) array_unshift($path, ROOT_PATH);
-
-    return implode(DIRECTORY_SEPARATOR, $path);
-}

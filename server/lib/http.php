@@ -3,6 +3,14 @@ if (!defined('IN_SINOSKY')) exit(1);
 
 class http {
     public static function curl_get($url, $timeout = 15, $retry = 5) {
+        if (is_array($url)) {
+            foreach ($url as $k => $v) {
+                $result[$k] = self::curl_get($v, $timeout, $retry);
+            }
+
+            return $result;
+        }
+
         if (!isset($i)) {
             static $i;
             $i = 1;

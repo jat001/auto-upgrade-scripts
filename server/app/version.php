@@ -1,25 +1,14 @@
 <?php
 if (!defined('IN_SINOSKY')) exit(1);
 
-class version {
-    public $request;
-    public $time;
-
-    public function __construct($request) {
-        if (!$request) error_code(400);
-
-        $this->request = $request;
-    }
-
+class version extends output {
     public function run() {
-        $db = new db();
-
-        switch ($this->request[0]) {
+        switch (self::$request[0]) {
             case 'php':
-                $result = $db->get('php', 'http://php.net/downloads.php', 'regex', '/Current Stable.+?PHP (\d\.\d{1,2}\.\d{1,3})/is');
+                $result = $this->db->get('php', 'http://php.net/downloads.php', 'regex', '/Current Stable.+?PHP (\d\.\d{1,2}\.\d{1,3})/is');
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     echo $version;
                 }
@@ -27,10 +16,10 @@ class version {
                 break;
 
             case 'mysql':
-                $result = $db->get('mysql', 'http://dev.mysql.com/downloads/mysql/', 'regex', '/MySQL Community Server (\d\.\d{1,2}\.\d{1,3})/i');
+                $result = $this->db->get('mysql', 'http://dev.mysql.com/downloads/mysql/', 'regex', '/MySQL Community Server (\d\.\d{1,2}\.\d{1,3})/i');
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     echo $version;
                 }
@@ -38,10 +27,10 @@ class version {
                 break;
 
             case 'nginx':
-                $result = $db->get('nginx', 'http://nginx.org/en/download.html', 'regex', '/nginx-(\d\.\d{1,2}\.\d{1,3})/i');
+                $result = $this->db->get('nginx', 'http://nginx.org/en/download.html', 'regex', '/nginx-(\d\.\d{1,2}\.\d{1,3})/i');
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     echo $version;
                 }
@@ -49,10 +38,10 @@ class version {
                 break;
 
             case 'phpmyadmin':
-                $result = $db->get('phpmyadmin', 'http://www.phpmyadmin.net/home_page/version.json', 'json', 'version');
+                $result = $this->db->get('phpmyadmin', 'http://www.phpmyadmin.net/home_page/version.json', 'json', 'version');
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     echo $version;
                 }
@@ -60,13 +49,13 @@ class version {
                 break;
 
             case 'hosts':
-                $result = $db->get('hosts', 'http://freedom.txthinking.com/hosts');
+                $result = $this->db->get('hosts', 'http://freedom.txthinking.com/hosts');
 
                 if ($result) {
-                    list($hosts, $this->time) = $result;
+                    list($hosts, self::$time) = $result;
 
-                    if (isset($this->request[1]) && $this->request[1] == 'get') {
-                        if (isset($this->request[2]) && $this->request[2] == 'dl')
+                    if (isset(self::$request[1]) && self::$request[1] == 'get') {
+                        if (isset(self::$request[2]) && self::$request[2] == 'dl')
                             header('Content-Disposition: attachment; filename="hosts"');
 
                         echo $hosts;
@@ -80,7 +69,7 @@ class version {
                 break;
 
             case 'hhvm':
-                $result = $db->get('hhvm', 'https://api.github.com/repos/facebook/hhvm/tags', 'callback', function ($tags) {
+                $result = $this->db->get('hhvm', 'https://api.github.com/repos/facebook/hhvm/tags', 'callback', function ($tags) {
                     $tags = json_decode($tags, true);
 
                     if (!$tags) return false;
@@ -96,7 +85,7 @@ class version {
                 });
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     echo $version;
                 }
@@ -113,7 +102,7 @@ class version {
                     mkdir($qqwry_dir, 0755, true);
                 }
 
-                $result = $db->get('czip', 'http://update.cz88.net/ip/copywrite.rar', 'callback', function ($copywrite) {
+                $result = $this->db->get('czip', 'http://update.cz88.net/ip/copywrite.rar', 'callback', function ($copywrite) {
                     if (!$copywrite) return false;
 
                     $copywrite = unpack('Z4sign/Vversion/Vunknow0/Vsize/Vunknow1/Vkey/Z128text/Z128link', $copywrite);
@@ -163,7 +152,7 @@ class version {
                 });
 
                 if ($result) {
-                    list($version, $this->time) = $result;
+                    list($version, self::$time) = $result;
 
                     $qqwry = $version['date'] . '.dat';
 
@@ -181,8 +170,8 @@ class version {
                         $qqwry
                     ], false);
 
-                    if (isset($this->request[1])) {
-                        switch ($this->request[1]) {
+                    if (isset(self::$request[1])) {
+                        switch (self::$request[1]) {
                             case 'date':
                                 echo $version['date'];
 
@@ -217,7 +206,7 @@ class version {
                 break;
 
             default:
-                error_code(400);
+                self::error_code(400);
 
                 break;
         }

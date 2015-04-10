@@ -6,6 +6,10 @@ $request = array_filter($request);
 if (!$request) error_code(404);
 
 $class = array_shift($request);
+
+if (!$request) output::error_code(400);
+output::$request = $request;
+
 $file = realpath(build_file_path([
     'app',
     $class . '.php'
@@ -13,13 +17,13 @@ $file = realpath(build_file_path([
 if (dirname($file) != build_file_path([
     'app'
 ]) || !file_exists($file))
-    error_code(403);
+    output::error_code(403);
 
 require_once($file);
 
 ob_start();
 
-$class = new $class($request);
+$class = new $class();
 $class->run();
 
 $length = ob_get_length();
@@ -30,9 +34,9 @@ header('Content-Type: text/plain; charset=UTF-8');
 header('Cache-Control: public, max-age=0, s-maxage=0');
 header('Date: ' . date('D, d M Y H:i:s', time()) . ' GMT');
 
-if (!empty($class->time)) {
-    header('Last-Modified: ' . date('D, d M Y H:i:s', $class->time) . ' GMT');
-    header('Expires: ' . date('D, d M Y H:i:s', $class->time + 86400) . ' GMT');
+if (output::$time) {
+    header('Last-Modified: ' . date('D, d M Y H:i:s', output::$time) . ' GMT');
+    header('Expires: ' . date('D, d M Y H:i:s', output::$time + 86400) . ' GMT');
 }
 
 header('Content-Length: ' . $length);
@@ -44,28 +48,38 @@ fastcgi_finish_request();
 longtime::call_longtime_func();
 exit(0);
 
-function error_code($status_code) {
-    switch ($status_code) {
-        case 400:
-            $status_code = '400 Bad Request';
+class output {
+    public static $request;
+    public static $time;
+    protected $db;
 
-            break;
-
-        case 403:
-            $status_code = '403 Forbidden';
-
-            break;
-
-        case 404:
-            $status_code = '404 Not Found';
-
-            break;
+    public function __construct() {
+        $this->db = new db();
     }
 
-    ob_end_clean();
+    public static function error_code($status_code) {
+        switch ($status_code) {
+            case 400:
+                $status_code = '400 Bad Request';
 
-    header('HTTP/1.1 ' . $status_code);
-    header('Status: ' . $status_code);
+                break;
 
-    exit($status_code);
+            case 403:
+                $status_code = '403 Forbidden';
+
+                break;
+
+            case 404:
+                $status_code = '404 Not Found';
+
+                break;
+        }
+
+        ob_end_clean();
+
+        header('HTTP/1.1 ' . $status_code);
+        header('Status: ' . $status_code);
+
+        exit($status_code);
+    }
 }
