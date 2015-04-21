@@ -1,4 +1,5 @@
 #!/bin/bash
+# https://github.com/facebook/hhvm/wiki/Building-and-Installing-HHVM
 
 hhvm='/usr/local/hhvm/bin/hhvm'
 srcFolder="/usr/local/src/hhvm"
@@ -17,6 +18,8 @@ fi
 if [ -d "$srcFolder" ]; then
     cd "$srcFolder"
     rm -rf ./third-party
+    git clean -dfx
+    git reset --hard
     git pull
 else
     git clone https://github.com/facebook/hhvm.git "$srcFolder"
