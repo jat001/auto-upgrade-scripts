@@ -1,6 +1,6 @@
 <?php
 define('IN_SINOSKY', true);
-define('API_Version', '0.01-stable');
+define('API_Version', '0.0.3-stable');
 define('ROOT_PATH', __DIR__);
 define('DATA_PATH', build_file_path([
     'data'
