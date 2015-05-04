@@ -1,10 +1,10 @@
 #!/bin/bash
 # https://github.com/facebook/hhvm/wiki/Building-and-Installing-HHVM
 
-hhvm='/usr/local/hhvm/bin/hhvm'
+hhvm='/usr/local/hhvm'
 srcFolder="/usr/local/src/hhvm"
 
-installedVersion=$($hhvm --version | grep -ioP '(?<=HipHop VM )\d\.\d{1,2}\.\d{1,2}')
+installedVersion=$($hhvm/bin/hhvm --version | grep -ioP '(?<=HipHop VM )\d\.\d{1,2}\.\d{1,2}')
 currentVersion=$(curl 'https://api.sinosky.org/version/hhvm') || exit 1
 
 if [ -z "$currentVersion" ]; then
@@ -29,7 +29,7 @@ fi
 git checkout tags/HHVM-$currentVersion
 git submodule update --init --recursive
 
-cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/hhvm && make || exit 1
+cmake . -DCMAKE_INSTALL_PREFIX=$hhvm && make || exit 1
 
 service hhvm stop
 make install

@@ -205,6 +205,28 @@ class version extends output {
 
                 break;
 
+            case 'chinadns':
+                $result = $this->db->get('chinadns', 'https://api.github.com/repos/clowwindy/ChinaDNS/tags', 'callback', function ($tags) {
+                    $tags = json_decode($tags, true);
+
+                    if (!$tags) return false;
+
+                    foreach ($tags as $tag) {
+                        $tag['version'] = $tag['name'];
+                        if (empty($version) || version_compare($tag['version'], $version, '>')) $version = $tag['version'];
+                    }
+
+                    return $version;
+                });
+
+                if ($result) {
+                    list($version, self::$time) = $result;
+
+                    echo $version;
+                }
+
+                break;
+
             default:
                 self::error_code(400);
 
