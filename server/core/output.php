@@ -3,7 +3,7 @@ if (!defined('IN_SINOSKY')) exit(1);
 
 $request = explode('/', $_SERVER['REQUEST_URI']);
 $request = array_filter($request);
-if (!$request) error_code(404);
+if (!$request) output::error_code(404);
 
 $class = array_shift($request);
 
